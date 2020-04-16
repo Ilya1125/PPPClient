@@ -8,4 +8,4 @@
   
 
 ### Installation
-  For start using this app you need to specify your email and password in EmailConfig.jav
+  For start using this app you need to specify your email and password in EmailConfig.java
