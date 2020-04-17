@@ -42,12 +42,11 @@ public class CsrsPPPServiceImpl implements CsrsPPPService {
         new ArrayList<>(
             Arrays.asList(
                 "python3",
-                "/home/ilya/Downloads/rinex/csrs_ppp_auto_v1_4_0.py",
+                "csrs_ppp_auto_v1_4_0.py",
                 "--user_name",
                 csrsUsername,
                 "--rnx",
                 saveUploadFileLocally(uploadFile),
-                    //"/home/ilya/Downloads/rinex/" + uploadFile.getOriginalFilename(),
                 "--mode",
                 processType == null ? "Static" : processType,
                 "--email",
@@ -71,6 +70,7 @@ public class CsrsPPPServiceImpl implements CsrsPPPService {
   }
 
   private String saveUploadFileLocally(MultipartFile uploadFile) throws IOException {
+      //here specify directory for uplloaded files
     File temp_file = new File("/home/ilya/IdeaProjects/PPPClient/uploadedFiles" + uploadFile.getOriginalFilename());
     uploadFile.transferTo(temp_file);
 
