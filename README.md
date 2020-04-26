@@ -9,4 +9,4 @@ Microservice for submitting rinex file to popular PPP processing services
   
 
 ### Installation
-  For start using this app you need to specify your email and password in EmailConfig.java
+  For start using this app you need to specify your email and password in EmailConfig.java and project directory for in CsrsServiceImpl.java
