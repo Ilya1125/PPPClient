@@ -1,9 +1,7 @@
 package handlers;
 
 import dto.ErrorDto;
-import exceptions.CustomSqlException;
 import exceptions.InvalidDataException;
-import exceptions.NoSuchEntityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.validation.ConstraintViolation;
@@ -23,30 +20,17 @@ import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @ControllerAdvice
 @Slf4j
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NoSuchEntityException.class)
-    protected ResponseEntity<ErrorDto> handleEntityNotFound(NoSuchEntityException ex) {
-        log.error(ex.getClass().getName(), ex);
-        ErrorDto errorDto = new ErrorDto(NOT_FOUND, ex.getClass().getName(), ex.getMessage());
-        return new ResponseEntity<>(errorDto, new HttpHeaders(), errorDto.getStatus());
-    }
-
     @ExceptionHandler(InvalidDataException.class)
     protected ResponseEntity<ErrorDto> handleInvalidDate(InvalidDataException ex) {
         log.error(ex.getClass().getName(), ex);
         ErrorDto errorDto = new ErrorDto(BAD_REQUEST, ex.getClass().getName(), ex.getMessage());
-        return new ResponseEntity<>(errorDto, new HttpHeaders(), errorDto.getStatus());
-    }
-
-    @ExceptionHandler(CustomSqlException.class)
-    protected ResponseEntity<ErrorDto> handleSqlException(CustomSqlException ex) {
-        log.error(ex.getClass().getName(), ex);
-        ErrorDto errorDto = new ErrorDto(METHOD_NOT_ALLOWED, ex.getClass().getName(), ex.getMessage());
         return new ResponseEntity<>(errorDto, new HttpHeaders(), errorDto.getStatus());
     }
 
