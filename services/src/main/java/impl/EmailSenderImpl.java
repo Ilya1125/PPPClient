@@ -1,53 +1,79 @@
 package impl;
 
 import interfaces.EmailSender;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
 import java.util.Properties;
 
+import static utils.FileUtils.saveUploadFileLocally;
+
 @Service
+@Slf4j
 public class EmailSenderImpl implements EmailSender {
-    @Autowired
-    private JavaMailSender mailSender;
 
-    public void sendMail(String to, String subject, String text) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
+  Properties prop = new Properties();
+  Session session;
 
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+  {
+    prop.put("mail.smtp.host", "smtp.gmail.com");
+    prop.put("mail.smtp.port", "587");
+    prop.put("mail.smtp.auth", "true");
+    prop.put("mail.smtp.starttls.enable", "true");
 
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(text);
-        mailSender.send(message);
+    session =
+        Session.getInstance(
+            prop,
+            new javax.mail.Authenticator() {
+              protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(System.getenv("EMAIL"), System.getenv("PASSWORD"));
+              }
+            });
+  }
 
-    }
+  Message message = new MimeMessage(session);
 
-    public void sendMessageWithAttachment(
-            String to, String subject, String text, MultipartFile file) throws MessagingException {
+  public void sendMail(String to, String subject, String text) throws MessagingException {
 
-        MimeMessage message = mailSender.createMimeMessage();
+    buildMessage(to, subject, text);
 
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+    log.info("send email, to: {}, subject: {}, text: {}", to, subject, text);
 
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(text);
+    Transport.send(message);
+  }
 
-        helper.addAttachment(file.getOriginalFilename(), file);
+  public void sendMessageWithAttachment(String to, String subject, String text, MultipartFile file)
+      throws MessagingException, IOException {
 
-        mailSender.send(message);
-    }
+    buildMessage(to, subject, text);
+
+    Multipart multipart = new MimeMultipart();
+    MimeBodyPart attachPart = new MimeBodyPart();
+    attachPart.attachFile(saveUploadFileLocally(file));
+    multipart.addBodyPart(attachPart);
+    message.setContent(multipart);
+
+    log.info(
+        "send email with attachment {}, to: {}, subject: {}, text: {}",
+        file.getOriginalFilename(),
+        to,
+        subject,
+        text);
+
+    Transport.send(message);
+  }
+
+  private void buildMessage(String to, String subject, String text) throws MessagingException {
+    message.setFrom(new InternetAddress(System.getenv("EMAIL")));
+    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+    message.setSubject(subject);
+    message.setText(text);
+  }
 }
-
-

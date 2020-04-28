@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 
 @Service
 @Slf4j
@@ -19,7 +20,7 @@ public class MagicPPPServiceImpl implements MagicPPPService {
   private static final String MAGIC_PPP_EMAIL = "magicppp@gmv.com";
 
   @Override
-  public void process(String processType, MultipartFile uploadFile) throws MessagingException {
+  public void process(String processType, MultipartFile uploadFile) throws MessagingException, IOException {
     log.info("processType: {}", processType);
     log.info("file: {}", uploadFile.getOriginalFilename());
 
