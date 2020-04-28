@@ -9,4 +9,5 @@ Microservice for submitting rinex file to popular PPP processing services
   
 
 ### Installation
-  For start using this app you need to specify your email and password in EmailConfig.java
+  For start using this app you need to specify your email, password and directory for uploaded files in corresponding environment variables:
+    EMAIL, PASSWORD, UPLOADED_FILE_DIR

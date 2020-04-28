@@ -1,22 +1,19 @@
 package impl;
 
-import dto.FtpDto;
 import exceptions.InvalidDataException;
-import interfaces.AppsPPPService;
 import interfaces.CsrsPPPService;
-import interfaces.EmailSender;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.net.ftp.FTPClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static utils.FileUtils.saveUploadFileLocally;
 
 @Service
 @Slf4j
@@ -67,14 +64,6 @@ public class CsrsPPPServiceImpl implements CsrsPPPService {
 
     int exitCode = process.waitFor();
     System.out.println("\nExited with error code : " + exitCode);
-  }
-
-  private String saveUploadFileLocally(MultipartFile uploadFile) throws IOException {
-      //here specify directory for uplloaded files
-    File temp_file = new File("/home/ilya/IdeaProjects/PPPClient/uploadedFiles" + uploadFile.getOriginalFilename());
-    uploadFile.transferTo(temp_file);
-
-    return temp_file.getAbsolutePath();
   }
 }
 

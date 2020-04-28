@@ -34,7 +34,7 @@ public class PrecisePointPositioningController {
       @RequestParam MultipartFile uploadFile,
       @ApiParam(defaultValue = "Static", allowableValues = "Static, Kinematic")
         @RequestParam String processType)
-      throws MessagingException {
+          throws MessagingException, IOException {
     log.info("magicPPP, processType: {}", processType);
     if (uploadFile.isEmpty()) {
       return new ResponseEntity<>("please select a file!", HttpStatus.OK);
